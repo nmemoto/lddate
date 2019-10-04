@@ -30,7 +30,10 @@ func main() {
 	cnt := 0
 	for now := range now(ctx, displayDuration) {
 		print("\033[H\033[2J")
-		figure.NewFigure(now.Format(goFmtStr), font, true).Print()
+		nowStr := now.Format(goFmtStr)
+		for _, str := range strings.Split(nowStr, "\n") {
+			figure.NewFigure(str, font, true).Print()
+		}
 		cnt++
 	}
 	if canceled {
