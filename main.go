@@ -97,6 +97,14 @@ func formatDate(format string) string {
 			dateCmdFmt: "%S",
 			goFmt:      "05",
 		},
+		{
+			dateCmdFmt: "%A",
+			goFmt:      "Monday",
+		},
+		{
+			dateCmdFmt: "%a",
+			goFmt:      "Mon",
+		},
 	}
 	goFmtStr := format
 	for _, m := range matchTypes {
@@ -118,15 +126,15 @@ func (str artStr) Print() {
 func (str artStr) CenterPrint() {
 	maxWidth := 0
 	for _, rowArtStr := range str {
-		if maxWidth < len(rowArtStr[0]) {
-			maxWidth = len(rowArtStr[0])
+		if maxRowArtStrWidth(rowArtStr) > maxWidth {
+			maxWidth = maxRowArtStrWidth(rowArtStr)
 		}
 	}
 	for i, rowArtStr := range str {
-		if maxWidth == len(rowArtStr[0]) {
+		if maxWidth == maxRowArtStrWidth(rowArtStr) {
 			continue
 		}
-		diff := (maxWidth - len(rowArtStr[0])) / 2
+		diff := (maxWidth - maxRowArtStrWidth(rowArtStr)) / 2
 		for k, rowStr := range rowArtStr {
 			newRowStr := strings.Repeat(" ", diff) + rowStr
 			str[i][k] = newRowStr
@@ -138,19 +146,29 @@ func (str artStr) CenterPrint() {
 func (str artStr) RightPrint() {
 	maxWidth := 0
 	for _, rowArtStr := range str {
-		if maxWidth < len(rowArtStr[0]) {
-			maxWidth = len(rowArtStr[0])
+		if maxRowArtStrWidth(rowArtStr) > maxWidth {
+			maxWidth = maxRowArtStrWidth(rowArtStr)
 		}
 	}
 	for i, rowArtStr := range str {
-		if maxWidth == len(rowArtStr[0]) {
+		if maxWidth == maxRowArtStrWidth(rowArtStr) {
 			continue
 		}
-		diff := maxWidth - len(rowArtStr[0])
+		diff := maxWidth - maxRowArtStrWidth(rowArtStr)
 		for k, rowStr := range rowArtStr {
 			newRowStr := strings.Repeat(" ", diff) + rowStr
 			str[i][k] = newRowStr
 		}
 	}
 	str.Print()
+}
+
+func maxRowArtStrWidth(rowArtStr []string) int {
+	max := 0
+	for _, str := range rowArtStr {
+		if len(str) > max {
+			max = len(str)
+		}
+	}
+	return max
 }
