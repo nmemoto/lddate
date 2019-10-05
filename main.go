@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	format, duration, font := parseArgs()
+	format, duration, font, position := parseArgs()
 	displayDuration := time.Duration(duration) * time.Second
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -31,8 +31,18 @@ func main() {
 	for now := range now(ctx, displayDuration) {
 		print("\033[H\033[2J")
 		nowStr := now.Format(goFmtStr)
+		var artStr artStr
 		for _, str := range strings.Split(nowStr, "\n") {
-			figure.NewFigure(str, font, true).Print()
+			artStr = append(artStr, figure.NewFigure(str, font, true).Slicify())
+		}
+
+		switch position {
+		case "left":
+			artStr.Print()
+		case "center":
+			artStr.CenterPrint()
+		case "right":
+			artStr.RightPrint()
 		}
 		cnt++
 	}
@@ -93,4 +103,54 @@ func formatDate(format string) string {
 		goFmtStr = strings.Replace(goFmtStr, m.dateCmdFmt, m.goFmt, -1)
 	}
 	return goFmtStr
+}
+
+type artStr [][]string
+
+func (str artStr) Print() {
+	for _, rowArtStr := range str {
+		for _, row := range rowArtStr {
+			fmt.Println(row)
+		}
+	}
+}
+
+func (str artStr) CenterPrint() {
+	maxWidth := 0
+	for _, rowArtStr := range str {
+		if maxWidth < len(rowArtStr[0]) {
+			maxWidth = len(rowArtStr[0])
+		}
+	}
+	for i, rowArtStr := range str {
+		if maxWidth == len(rowArtStr[0]) {
+			continue
+		}
+		diff := (maxWidth - len(rowArtStr[0])) / 2
+		for k, rowStr := range rowArtStr {
+			newRowStr := strings.Repeat(" ", diff) + rowStr
+			str[i][k] = newRowStr
+		}
+	}
+	str.Print()
+}
+
+func (str artStr) RightPrint() {
+	maxWidth := 0
+	for _, rowArtStr := range str {
+		if maxWidth < len(rowArtStr[0]) {
+			maxWidth = len(rowArtStr[0])
+		}
+	}
+	for i, rowArtStr := range str {
+		if maxWidth == len(rowArtStr[0]) {
+			continue
+		}
+		diff := maxWidth - len(rowArtStr[0])
+		for k, rowStr := range rowArtStr {
+			newRowStr := strings.Repeat(" ", diff) + rowStr
+			str[i][k] = newRowStr
+		}
+	}
+	str.Print()
 }

@@ -38,6 +38,10 @@ Usage of ./lddate:
         font (default "roman")
   -format string
         date format (default "%Y/%m/%d %H:%M:%S")
+  -p string
+        left (default "left")
+  -position string
+        left (default "left")
 ```
 
 You can choose from the following fonts
@@ -80,6 +84,28 @@ $ ./lddate -f %Y/%m/%d$'\n'%H:%M:%S -font standard
    __) |   |_ \  (_)   |_ \    __) | (_) |___ \    |_ \
   / __/   ___) |  _   ___) |  / __/   _   ___) |  ___) |
  |_____| |____/  (_) |____/  |_____| (_) |____/  |____/
+```
+
+```
+$ ./lddate -format %Y/%m/%d$'\n'%H:%M:%S -p center
+  .oooo.     .oooo.     .o   .ooooo.        88   .o    .oooo.        88   .oooo.       .ooo
+.dP""Y88b   d8P'`Y8b  o888  888' `Y88.     .8' o888   d8P'`Y8b      .8'  d8P'`Y8b    .88'
+      ]8P' 888    888  888  888    888    .8'   888  888    888    .8'  888    888  d88'
+    .d8P'  888    888  888   `Vbood888   .8'    888  888    888   .8'   888    888 d888P"Ybo.
+  .dP'     888    888  888        888'  .8'     888  888    888  .8'    888    888 Y88[   ]88
+.oP     .o `88b  d88'  888      .88P'  .8'      888  `88b  d88' .8'     `88b  d88' `Y88   88P
+8888888888  `Y8bd8P'  o888o   .oP'     88      o888o  `Y8bd8P'  88       `Y8bd8P'   `88bod8'
+
+
+
+           .oooo.     .oooo.         .oooo.     .oooo.         .oooo.     oooooooo
+          d8P'`Y8b   d8P'`Y8b      .dP""Y88b  .dP""Y88b       d8P'`Y8b   dP"""""""
+         888    888 888    888           ]8P'       ]8P'     888    888 d88888b.
+         888    888 888    888         <88b.      <88b.      888    888     `Y88b
+         888    888 888    888 o8o      `88b.      `88b. o8o 888    888       ]88
+         `88b  d88' `88b  d88' `"' o.   .88P  o.   .88P  `"' `88b  d88' o.   .88P
+          `Y8bd8P'   `Y8bd8P'  o8o `8bd88P'   `8bd88P'   o8o  `Y8bd8P'  `8bd88P'
+                               `"'                       `"'
 ```
 
 ## License

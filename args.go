@@ -6,9 +6,10 @@ const (
 	defaultFormat   = "%Y/%m/%d %H:%M:%S"
 	defaultDuration = 1
 	defaultFont     = "roman"
+	defaultPosition = "left"
 )
 
-func parseArgs() (format string, duration int, font string) {
+func parseArgs() (format string, duration int, font string, position string) {
 
 	//https://github.com/common-nighthawk/go-figure#supported-fonts
 	fonts := []string{"3-d", "3x5", "5lineoblique", "acrobatic", "alligator", "alligator2", "alphabet", "avatar", "banner",
@@ -42,15 +43,21 @@ func parseArgs() (format string, duration int, font string) {
 			"univers", "usaflag", "wavy", "weird",
 		}
 	*/
+	positions := []string{"left", "center", "right"}
 
 	flag.StringVar(&format, "f", defaultFormat, "date format")
 	flag.StringVar(&format, "format", defaultFormat, "date format")
 	flag.IntVar(&duration, "d", defaultDuration, "update date duration")
 	flag.IntVar(&duration, "duration", defaultDuration, "update date duration")
 	flag.StringVar(&font, "font", defaultFont, "font")
+	flag.StringVar(&position, "p", defaultPosition, "left")
+	flag.StringVar(&position, "position", defaultPosition, "left")
 	flag.Parse()
 	if !contains(fonts, font) {
 		font = defaultFont
+	}
+	if !contains(positions, position) {
+		position = defaultPosition
 	}
 	return
 }
