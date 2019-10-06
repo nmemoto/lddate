@@ -51,7 +51,7 @@ https://github.com/common-nighthawk/go-figure#supported-fonts
 ## example
 
 ```
-$ ./lddate -f %Y/%m/%d$'\n'%H:%M:%S
+$ ./lddate -f "%Y/%m/%d\n%H:%M:%S"
   .oooo.     .oooo.     .o   .ooooo.        88   .o    .oooo.        88   .oooo.         .o
 .dP""Y88b   d8P'`Y8b  o888  888' `Y88.     .8' o888   d8P'`Y8b      .8'  d8P'`Y8b      .d88
       ]8P' 888    888  888  888    888    .8'   888  888    888    .8'  888    888   .d'888
@@ -73,7 +73,7 @@ $ ./lddate -f %Y/%m/%d$'\n'%H:%M:%S
 ```
 
 ```
-$ ./lddate -f %Y/%m/%d$'\n'%H:%M:%S -font standard
+$ ./lddate -f "%Y/%m/%d\n%H:%M:%S" -font standard
  ____     ___    _    ___       __  _    ___       __   ___    _  _
  |___ \   / _ \  / |  / _ \     / / / |  / _ \     / /  / _ \  | || |
    __) | | | | | | | | (_) |   / /  | | | | | |   / /  | | | | | || |_
@@ -87,7 +87,7 @@ $ ./lddate -f %Y/%m/%d$'\n'%H:%M:%S -font standard
 ```
 
 ```
-$ ./lddate -format %Y/%m/%d$'\n'%H:%M:%S -p center
+$ ./lddate -format "%Y/%m/%d\n%H:%M:%S" -p center
   .oooo.     .oooo.     .o   .ooooo.        88   .o    .oooo.        88   .oooo.       .ooo
 .dP""Y88b   d8P'`Y8b  o888  888' `Y88.     .8' o888   d8P'`Y8b      .8'  d8P'`Y8b    .88'
       ]8P' 888    888  888  888    888    .8'   888  888    888    .8'  888    888  d88'
@@ -109,7 +109,7 @@ $ ./lddate -format %Y/%m/%d$'\n'%H:%M:%S -p center
 ```
 
 ```
-$ ./lddate -format %Y/%m/%d$'\n'%a$'\n'%H:%M:%S -p center
+$ ./lddate -format "%Y/%m/%d\n%a\n%H:%M:%S" -p center
   .oooo.     .oooo.     .o   .ooooo.        88   .o    .oooo.        88   .oooo.       .ooo
 .dP""Y88b   d8P'`Y8b  o888  888' `Y88.     .8' o888   d8P'`Y8b      .8'  d8P'`Y8b    .88'
       ]8P' 888    888  888  888    888    .8'   888  888    888    .8'  888    888  d88'

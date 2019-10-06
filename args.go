@@ -1,6 +1,9 @@
 package main
 
-import "flag"
+import (
+	"flag"
+	"strings"
+)
 
 const (
 	defaultFormat   = "%Y/%m/%d %H:%M:%S"
@@ -56,6 +59,7 @@ func parseArgs() (format string, duration int, font string, position string) {
 	if !contains(fonts, font) {
 		font = defaultFont
 	}
+	format = strings.Replace(format, "\\n", "\n", -1)
 	if !contains(positions, position) {
 		position = defaultPosition
 	}
