@@ -146,9 +146,9 @@ func (c *CLI) Run(args []string) int {
 			case "left":
 				artStr.Print(c.outStream)
 			case "center":
-				artStr.CenterPrint(c.outStream)
+				artStr.Center().Print(c.outStream)
 			case "right":
-				artStr.RightPrint(c.outStream)
+				artStr.Right().Print(c.outStream)
 			}
 		} else if tw >= width && th < height {
 			fmt.Println("Increase the height of the terminal")
@@ -240,7 +240,18 @@ func formatDate(format string) string {
 	return goFmtStr
 }
 
-type artStr [][]string
+type rowArtStr []string
+
+func (artStr rowArtStr) MaxWidth() (max int) {
+	for _, str := range artStr {
+		if len(str) > max {
+			max = len(str)
+		}
+	}
+	return
+}
+
+type artStr []rowArtStr
 
 func (str artStr) Print(w io.Writer) {
 	for _, rowArtStr := range str {
@@ -250,34 +261,34 @@ func (str artStr) Print(w io.Writer) {
 	}
 }
 
-func (str artStr) CenterPrint(w io.Writer) {
+func (str artStr) Center() artStr {
 	maxWidth := str.Width()
 	for i, rowArtStr := range str {
-		if maxWidth == maxRowArtStrWidth(rowArtStr) {
+		if maxWidth == rowArtStr.MaxWidth() {
 			continue
 		}
-		diff := (maxWidth - maxRowArtStrWidth(rowArtStr)) / 2
+		diff := (maxWidth - rowArtStr.MaxWidth()) / 2
 		for k, rowStr := range rowArtStr {
 			newRowStr := strings.Repeat(" ", diff) + rowStr
 			str[i][k] = newRowStr
 		}
 	}
-	str.Print(w)
+	return str
 }
 
-func (str artStr) RightPrint(w io.Writer) {
+func (str artStr) Right() artStr {
 	maxWidth := str.Width()
 	for i, rowArtStr := range str {
-		if maxWidth == maxRowArtStrWidth(rowArtStr) {
+		if maxWidth == rowArtStr.MaxWidth() {
 			continue
 		}
-		diff := maxWidth - maxRowArtStrWidth(rowArtStr)
+		diff := maxWidth - rowArtStr.MaxWidth()
 		for k, rowStr := range rowArtStr {
 			newRowStr := strings.Repeat(" ", diff) + rowStr
 			str[i][k] = newRowStr
 		}
 	}
-	str.Print(w)
+	return str
 }
 
 func (str artStr) Height() (height int) {
@@ -289,21 +300,11 @@ func (str artStr) Height() (height int) {
 
 func (str artStr) Width() (maxWidth int) {
 	for _, rowArtStr := range str {
-		if maxRowArtStrWidth(rowArtStr) > maxWidth {
-			maxWidth = maxRowArtStrWidth(rowArtStr)
+		if w := rowArtStr.MaxWidth(); w > maxWidth {
+			maxWidth = w
 		}
 	}
 	return
-}
-
-func maxRowArtStrWidth(rowArtStr []string) int {
-	max := 0
-	for _, str := range rowArtStr {
-		if len(str) > max {
-			max = len(str)
-		}
-	}
-	return max
 }
 
 func contains(s []string, e string) bool {
