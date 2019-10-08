@@ -12,6 +12,7 @@ import (
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/fatih/color"
+	"github.com/nsf/termbox-go"
 )
 
 const (
@@ -132,15 +133,26 @@ func (c *CLI) Run(args []string) int {
 		for _, str := range strings.Split(nowStr, "\n") {
 			artStr = append(artStr, figure.NewFigure(str, font, true).Slicify())
 		}
+		maxWidth := maxArtStrWidth(artStr)
 
-		switch position {
-		case "left":
-			artStr.Print(c.outStream)
-		case "center":
-			artStr.CenterPrint(c.outStream)
-		case "right":
-			artStr.RightPrint(c.outStream)
+		if err := termbox.Init(); err != nil {
+			panic(err)
 		}
+		w, _ := termbox.Size()
+		termbox.Close()
+		if w > maxWidth {
+			switch position {
+			case "left":
+				artStr.Print(c.outStream)
+			case "center":
+				artStr.CenterPrint(c.outStream)
+			case "right":
+				artStr.RightPrint(c.outStream)
+			}
+		} else {
+			fmt.Println("Increase the width of the terminal")
+		}
+
 		cnt++
 	}
 	if canceled {
@@ -235,12 +247,7 @@ func (str artStr) Print(w io.Writer) {
 }
 
 func (str artStr) CenterPrint(w io.Writer) {
-	maxWidth := 0
-	for _, rowArtStr := range str {
-		if maxRowArtStrWidth(rowArtStr) > maxWidth {
-			maxWidth = maxRowArtStrWidth(rowArtStr)
-		}
-	}
+	maxWidth := maxArtStrWidth(str)
 	for i, rowArtStr := range str {
 		if maxWidth == maxRowArtStrWidth(rowArtStr) {
 			continue
@@ -255,12 +262,7 @@ func (str artStr) CenterPrint(w io.Writer) {
 }
 
 func (str artStr) RightPrint(w io.Writer) {
-	maxWidth := 0
-	for _, rowArtStr := range str {
-		if maxRowArtStrWidth(rowArtStr) > maxWidth {
-			maxWidth = maxRowArtStrWidth(rowArtStr)
-		}
-	}
+	maxWidth := maxArtStrWidth(str)
 	for i, rowArtStr := range str {
 		if maxWidth == maxRowArtStrWidth(rowArtStr) {
 			continue
@@ -272,6 +274,15 @@ func (str artStr) RightPrint(w io.Writer) {
 		}
 	}
 	str.Print(w)
+}
+
+func maxArtStrWidth(str artStr) (maxWidth int) {
+	for _, rowArtStr := range str {
+		if maxRowArtStrWidth(rowArtStr) > maxWidth {
+			maxWidth = maxRowArtStrWidth(rowArtStr)
+		}
+	}
+	return
 }
 
 func maxRowArtStrWidth(rowArtStr []string) int {
