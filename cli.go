@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/common-nighthawk/go-figure"
+	"github.com/fatih/color"
 )
 
 const (
@@ -27,8 +28,8 @@ const (
 )
 
 var (
-	format, font, position string
-	duration               time.Duration
+	format, font, position, strColor string
+	duration                         time.Duration
 )
 
 type CLI struct {
@@ -80,6 +81,8 @@ func (c *CLI) Run(args []string) int {
 	flags.StringVar(&font, "font", defaultFont, "font")
 	flags.StringVar(&position, "p", defaultPosition, "left")
 	flags.StringVar(&position, "position", defaultPosition, "left")
+	flags.StringVar(&strColor, "c", defaultColor, "text color")
+	flags.StringVar(&strColor, "color", defaultColor, "text color")
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParserFlagError
 	}
@@ -88,6 +91,25 @@ func (c *CLI) Run(args []string) int {
 	}
 	if !contains(positions, position) {
 		position = defaultPosition
+	}
+
+	switch strColor {
+	case "red":
+		color.Set(color.FgRed)
+	case "blue":
+		color.Set(color.FgBlue)
+	case "green":
+		color.Set(color.FgGreen)
+	case "yellow":
+		color.Set(color.FgYellow)
+	case "magenta":
+		color.Set(color.FgMagenta)
+	case "cyan":
+		color.Set(color.FgCyan)
+	case "black":
+		color.Set(color.FgBlack)
+	case "white":
+		color.Set(color.FgWhite)
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
