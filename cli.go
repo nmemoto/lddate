@@ -133,15 +133,15 @@ func (c *CLI) Run(args []string) int {
 		for _, str := range strings.Split(nowStr, "\n") {
 			artStr = append(artStr, figure.NewFigure(str, font, true).Slicify())
 		}
-		maxWidth := maxArtStrWidth(artStr)
-		height := artStrHeight(artStr)
+		width := artStr.Width()
+		height := artStr.Height()
 
 		if err := termbox.Init(); err != nil {
 			panic(err)
 		}
-		w, h := termbox.Size()
+		tw, th := termbox.Size()
 		termbox.Close()
-		if w >= maxWidth && h >= height {
+		if tw >= width && th >= height {
 			switch position {
 			case "left":
 				artStr.Print(c.outStream)
@@ -150,9 +150,9 @@ func (c *CLI) Run(args []string) int {
 			case "right":
 				artStr.RightPrint(c.outStream)
 			}
-		} else if w >= maxWidth && h < height {
+		} else if tw >= width && th < height {
 			fmt.Println("Increase the height of the terminal")
-		} else if w < maxWidth && h >= height {
+		} else if tw < width && th >= height {
 			fmt.Println("Increase the width of the terminal")
 		} else {
 			fmt.Println("Increase the width & height of the terminal")
@@ -251,7 +251,7 @@ func (str artStr) Print(w io.Writer) {
 }
 
 func (str artStr) CenterPrint(w io.Writer) {
-	maxWidth := maxArtStrWidth(str)
+	maxWidth := str.Width()
 	for i, rowArtStr := range str {
 		if maxWidth == maxRowArtStrWidth(rowArtStr) {
 			continue
@@ -266,7 +266,7 @@ func (str artStr) CenterPrint(w io.Writer) {
 }
 
 func (str artStr) RightPrint(w io.Writer) {
-	maxWidth := maxArtStrWidth(str)
+	maxWidth := str.Width()
 	for i, rowArtStr := range str {
 		if maxWidth == maxRowArtStrWidth(rowArtStr) {
 			continue
@@ -280,14 +280,14 @@ func (str artStr) RightPrint(w io.Writer) {
 	str.Print(w)
 }
 
-func artStrHeight(str artStr) (artStrHeight int) {
+func (str artStr) Height() (height int) {
 	for _, rowArtStr := range str {
-		artStrHeight += len(rowArtStr)
+		height += len(rowArtStr)
 	}
 	return
 }
 
-func maxArtStrWidth(str artStr) (maxWidth int) {
+func (str artStr) Width() (maxWidth int) {
 	for _, rowArtStr := range str {
 		if maxRowArtStrWidth(rowArtStr) > maxWidth {
 			maxWidth = maxRowArtStrWidth(rowArtStr)
