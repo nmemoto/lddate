@@ -134,13 +134,14 @@ func (c *CLI) Run(args []string) int {
 			artStr = append(artStr, figure.NewFigure(str, font, true).Slicify())
 		}
 		maxWidth := maxArtStrWidth(artStr)
+		height := artStrHeight(artStr)
 
 		if err := termbox.Init(); err != nil {
 			panic(err)
 		}
-		w, _ := termbox.Size()
+		w, h := termbox.Size()
 		termbox.Close()
-		if w > maxWidth {
+		if w >= maxWidth && h >= height {
 			switch position {
 			case "left":
 				artStr.Print(c.outStream)
@@ -149,10 +150,13 @@ func (c *CLI) Run(args []string) int {
 			case "right":
 				artStr.RightPrint(c.outStream)
 			}
-		} else {
+		} else if w >= maxWidth && h < height {
+			fmt.Println("Increase the height of the terminal")
+		} else if w < maxWidth && h >= height {
 			fmt.Println("Increase the width of the terminal")
+		} else {
+			fmt.Println("Increase the width & height of the terminal")
 		}
-
 		cnt++
 	}
 	if canceled {
@@ -274,6 +278,13 @@ func (str artStr) RightPrint(w io.Writer) {
 		}
 	}
 	str.Print(w)
+}
+
+func artStrHeight(str artStr) (artStrHeight int) {
+	for _, rowArtStr := range str {
+		artStrHeight += len(rowArtStr)
+	}
+	return
 }
 
 func maxArtStrWidth(str artStr) (maxWidth int) {
