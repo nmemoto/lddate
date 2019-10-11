@@ -26,11 +26,13 @@ const (
 	defaultFont     = "roman"
 	defaultPosition = "left"
 	defaultColor    = "white"
+	defaultThp      = "top"
+	defaultTwp      = "left"
 )
 
 var (
-	format, font, position, strColor string
-	duration                         time.Duration
+	format, font, position, strColor, thp, twp string
+	duration                                   time.Duration
 )
 
 type CLI struct {
@@ -72,6 +74,9 @@ func (c *CLI) Run(args []string) int {
 		}
 	*/
 	positions := []string{"left", "center", "right"}
+	thps := []string{"top", "center", "bottom"}
+	twps := []string{"left", "center", "right"}
+
 	flags := flag.NewFlagSet("lddate", flag.ContinueOnError)
 	flags.SetOutput(c.errStream)
 
@@ -79,9 +84,11 @@ func (c *CLI) Run(args []string) int {
 	flags.StringVar(&format, "format", defaultFormat, "date format")
 	flags.DurationVar(&duration, "d", defaultDuration, "update date duration")
 	flags.DurationVar(&duration, "duration", defaultDuration, "update date duration")
-	flags.StringVar(&font, "font", defaultFont, "font")
-	flags.StringVar(&position, "p", defaultPosition, "left")
-	flags.StringVar(&position, "position", defaultPosition, "left")
+	flags.StringVar(&font, "font", defaultFont, "date font")
+	flags.StringVar(&position, "p", defaultPosition, "the position of the beginning of line")
+	flags.StringVar(&position, "position", defaultPosition, "the position of the beginning of line")
+	flags.StringVar(&thp, "thp", defaultThp, "relative height position in terminal")
+	flags.StringVar(&twp, "twp", defaultTwp, "relative width position in terminal")
 	flags.StringVar(&strColor, "c", defaultColor, "text color")
 	flags.StringVar(&strColor, "color", defaultColor, "text color")
 	if err := flags.Parse(args[1:]); err != nil {
@@ -93,7 +100,12 @@ func (c *CLI) Run(args []string) int {
 	if !contains(positions, position) {
 		position = defaultPosition
 	}
-
+	if !contains(thps, thp) {
+		thp = defaultThp
+	}
+	if !contains(twps, twp) {
+		twp = defaultTwp
+	}
 	switch strColor {
 	case "red":
 		color.Set(color.FgRed)
@@ -142,14 +154,7 @@ func (c *CLI) Run(args []string) int {
 		tw, th := termbox.Size()
 		termbox.Close()
 		if tw >= width && th >= height {
-			switch position {
-			case "left":
-				artStr.Print(c.outStream)
-			case "center":
-				artStr.Center().Print(c.outStream)
-			case "right":
-				artStr.Right().Print(c.outStream)
-			}
+			artStr.setPos(position).setTermPos(thp, twp, th, tw).Print(c.outStream)
 		} else if tw >= width && th < height {
 			fmt.Println("Increase the height of the terminal")
 		} else if tw < width && th >= height {
@@ -259,6 +264,78 @@ func (str artStr) Print(w io.Writer) {
 			fmt.Fprintln(w, row)
 		}
 	}
+}
+
+func (str artStr) setTermPos(updown string, leftright string, tmHeight int, tmWidth int) artStr {
+	switch leftright {
+	case "left":
+	case "center":
+		str = str.termWidthCenter(tmWidth)
+	case "right":
+		str = str.termWidthRight(tmWidth)
+	}
+	switch updown {
+	case "top":
+	case "center":
+		str = str.termHeightCenter(tmHeight)
+	case "bottom":
+		str = str.termHeightBottom(tmHeight)
+	}
+	return str
+}
+
+func (str artStr) termWidthCenter(tmWidth int) artStr {
+	diff := (tmWidth - str.Width()) / 2
+	for i, rowArtStr := range str {
+		for k, rowStr := range rowArtStr {
+			newRowStr := strings.Repeat(" ", diff) + rowStr
+			str[i][k] = newRowStr
+		}
+	}
+	return str
+}
+
+func (str artStr) termWidthRight(tmWidth int) artStr {
+	diff := (tmWidth - str.Width())
+	for i, rowArtStr := range str {
+		for k, rowStr := range rowArtStr {
+			newRowStr := strings.Repeat(" ", diff) + rowStr
+			str[i][k] = newRowStr
+		}
+	}
+	return str
+}
+
+func (str artStr) termHeightCenter(tmHeight int) artStr {
+	diff := (tmHeight - str.Height()) / 2
+	var empty rowArtStr
+	for i := 0; i < diff; i++ {
+		empty = append(empty, "")
+	}
+	str = append([]rowArtStr{empty}, str...)
+	str = append(str, empty)
+	return str
+}
+
+func (str artStr) termHeightBottom(tmHeight int) artStr {
+	diff := (tmHeight - str.Height())
+	var empty rowArtStr
+	for i := 0; i < diff; i++ {
+		empty = append(empty, "")
+	}
+	str = append([]rowArtStr{empty}, str...)
+	return str
+}
+
+func (str artStr) setPos(pos string) artStr {
+	switch position {
+	case "left":
+	case "center":
+		str = str.Center()
+	case "right":
+		str = str.Right()
+	}
+	return str
 }
 
 func (str artStr) Center() artStr {

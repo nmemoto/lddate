@@ -27,21 +27,29 @@ $ ./lddate
 
 ```
 $ ./lddate -h
-Usage of ./lddate:
-  -d int
-        update date duration (default 1)
-  -duration int
-        update date duration (default 1)
+Usage of lddate:
+  -c string
+    	text color (default "white")
+  -color string
+    	text color (default "white")
+  -d duration
+    	update date duration (default 1s)
+  -duration duration
+    	update date duration (default 1s)
   -f string
-        date format (default "%Y/%m/%d %H:%M:%S")
+    	date format (default "%Y/%m/%d %H:%M:%S")
   -font string
-        font (default "roman")
+    	date font (default "roman")
   -format string
-        date format (default "%Y/%m/%d %H:%M:%S")
+    	date format (default "%Y/%m/%d %H:%M:%S")
   -p string
-        left (default "left")
+    	the position of the beginning of line (default "left")
   -position string
-        left (default "left")
+    	the position of the beginning of line (default "left")
+  -thp string
+    	relative height position in terminal (default "top")
+  -twp string
+    	relative width position in terminal (default "left")
 ```
 
 You can choose from the following fonts
@@ -138,6 +146,50 @@ $ ./lddate -format "%Y/%m/%d\n%a\n%H:%M:%S" -p center
             `88b  d88'  888  `"' o.   .88P  `88b  d88' `"' o.   .88P  o.   .88P
              `Y8bd8P'  o888o o8o `8bd88P'    `Y8bd8P'  o8o `8bd88P'   `8bd88P'
                              `"'                       `"'
+
+```
+
+```
+./lddate -format "%Y/%m/%d\n(%a)\n%H:%M:%S" -p center -font epic -twp center -thp center
+
+
+
+
+
+
+
+                                                    _______  _______   __     _____           __    _______          __    _______
+                                                   / ___   )(  __   ) /  \   / ___ \      /\ /  \  (  __   )     /\ /  \  / ___   )
+                                                   \/   )  || (  )  | \/) ) ( (   ) )    / / \/) ) | (  )  |    / / \/) ) \/   )  |
+                                                       /   )| | /   |   | | ( (___) |   / /    | | | | /   |   / /    | |     /   )
+                                                     _/   / | (/ /) |   | |  \____  |  / /     | | | (/ /) |  / /     | |   _/   /
+                                                    /   _/  |   / | |   | |       ) | / /      | | |   / | | / /      | |  /   _/
+                                                   (   (__/\|  (__) | __) (_/\____) )/ /     __) (_|  (__) |/ /     __) (_(   (__/\
+                                                   \_______/(_______) \____/\______/ \/      \____/(_______)\/      \____/\_______/
+                                                                           _  _______  _______ _________ _
+                                                                          / )(  ____ \(  ___  )\__   __/( \
+                                                                         / / | (    \/| (   ) |   ) (    \ \
+                                                                        ( (  | (_____ | (___) |   | |     ) )
+                                                                        | |  (_____  )|  ___  |   | |     | |
+                                                                        ( (        ) || (   ) |   | |     ) )
+                                                                         \ \ /\____) || )   ( |   | |    / /
+                                                                          \_)\_______)|/     \|   )_(   (_/
+                                                               _______  _______      __       ___        __    _______
+                                                              (  __   )(  __   )    /  \     /   )      /  \  (  ____ \
+                                                              | (  )  || (  )  | _  \/) )   / /) |   _  \/) ) | (    \/
+                                                              | | /   || | /   |(_)   | |  / (_) (_ (_)   | | | (____
+                                                              | (/ /) || (/ /) |      | | (____   _)      | | (_____ \
+                                                              |   / | ||   / | | _    | |      ) (   _    | |       ) )
+                                                              |  (__) ||  (__) |(_) __) (_     | |  (_) __) (_/\____) )
+                                                              (_______)(_______)    \____/     (_)      \____/\______/
+
+
+
+
+
+
+
+
 
 ```
 
