@@ -12,7 +12,6 @@ import (
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/fatih/color"
-	"github.com/nsf/termbox-go"
 )
 
 const (
@@ -147,17 +146,12 @@ func (c *CLI) Run(args []string) int {
 		}
 		width := artStr.Width()
 		height := artStr.Height()
-
-		if err := termbox.Init(); err != nil {
-			panic(err)
-		}
-		tw, th := termbox.Size()
-		termbox.Close()
-		if tw >= width && th >= height {
-			artStr.setPos(position).setTermPos(thp, twp, th, tw).Print(c.outStream)
-		} else if tw >= width && th < height {
+		term := newTerm()
+		if term.Width >= width && term.Height >= height {
+			artStr.setPos(position).setTermPos(thp, twp, term).Print(c.outStream)
+		} else if term.Width >= width && term.Height < height {
 			fmt.Println("Increase the height of the terminal")
-		} else if tw < width && th >= height {
+		} else if term.Width < width && term.Height >= height {
 			fmt.Println("Increase the width of the terminal")
 		} else {
 			fmt.Println("Increase the width & height of the terminal")
@@ -243,145 +237,6 @@ func formatDate(format string) string {
 	}
 	goFmtStr = strings.Replace(goFmtStr, "\\n", "\n", -1)
 	return goFmtStr
-}
-
-type rowArtStr []string
-
-func (artStr rowArtStr) MaxWidth() (max int) {
-	for _, str := range artStr {
-		if len(str) > max {
-			max = len(str)
-		}
-	}
-	return
-}
-
-type artStr []rowArtStr
-
-func (str artStr) Print(w io.Writer) {
-	for _, rowArtStr := range str {
-		for _, row := range rowArtStr {
-			fmt.Fprintln(w, row)
-		}
-	}
-}
-
-func (str artStr) setTermPos(updown string, leftright string, tmHeight int, tmWidth int) artStr {
-	switch leftright {
-	case "left":
-	case "center":
-		str = str.termWidthCenter(tmWidth)
-	case "right":
-		str = str.termWidthRight(tmWidth)
-	}
-	switch updown {
-	case "top":
-	case "center":
-		str = str.termHeightCenter(tmHeight)
-	case "bottom":
-		str = str.termHeightBottom(tmHeight)
-	}
-	return str
-}
-
-func (str artStr) termWidthCenter(tmWidth int) artStr {
-	diff := (tmWidth - str.Width()) / 2
-	for i, rowArtStr := range str {
-		for k, rowStr := range rowArtStr {
-			newRowStr := strings.Repeat(" ", diff) + rowStr
-			str[i][k] = newRowStr
-		}
-	}
-	return str
-}
-
-func (str artStr) termWidthRight(tmWidth int) artStr {
-	diff := (tmWidth - str.Width())
-	for i, rowArtStr := range str {
-		for k, rowStr := range rowArtStr {
-			newRowStr := strings.Repeat(" ", diff) + rowStr
-			str[i][k] = newRowStr
-		}
-	}
-	return str
-}
-
-func (str artStr) termHeightCenter(tmHeight int) artStr {
-	diff := (tmHeight - str.Height()) / 2
-	var empty rowArtStr
-	for i := 0; i < diff; i++ {
-		empty = append(empty, "")
-	}
-	str = append([]rowArtStr{empty}, str...)
-	str = append(str, empty)
-	return str
-}
-
-func (str artStr) termHeightBottom(tmHeight int) artStr {
-	diff := (tmHeight - str.Height())
-	var empty rowArtStr
-	for i := 0; i < diff; i++ {
-		empty = append(empty, "")
-	}
-	str = append([]rowArtStr{empty}, str...)
-	return str
-}
-
-func (str artStr) setPos(pos string) artStr {
-	switch position {
-	case "left":
-	case "center":
-		str = str.Center()
-	case "right":
-		str = str.Right()
-	}
-	return str
-}
-
-func (str artStr) Center() artStr {
-	maxWidth := str.Width()
-	for i, rowArtStr := range str {
-		if maxWidth == rowArtStr.MaxWidth() {
-			continue
-		}
-		diff := (maxWidth - rowArtStr.MaxWidth()) / 2
-		for k, rowStr := range rowArtStr {
-			newRowStr := strings.Repeat(" ", diff) + rowStr
-			str[i][k] = newRowStr
-		}
-	}
-	return str
-}
-
-func (str artStr) Right() artStr {
-	maxWidth := str.Width()
-	for i, rowArtStr := range str {
-		if maxWidth == rowArtStr.MaxWidth() {
-			continue
-		}
-		diff := maxWidth - rowArtStr.MaxWidth()
-		for k, rowStr := range rowArtStr {
-			newRowStr := strings.Repeat(" ", diff) + rowStr
-			str[i][k] = newRowStr
-		}
-	}
-	return str
-}
-
-func (str artStr) Height() (height int) {
-	for _, rowArtStr := range str {
-		height += len(rowArtStr)
-	}
-	return
-}
-
-func (str artStr) Width() (maxWidth int) {
-	for _, rowArtStr := range str {
-		if w := rowArtStr.MaxWidth(); w > maxWidth {
-			maxWidth = w
-		}
-	}
-	return
 }
 
 func contains(s []string, e string) bool {
